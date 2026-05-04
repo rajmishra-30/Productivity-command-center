@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS — Productivity Command Center</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Cabinet+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ===== HEADER ===== -->
+  <header>
+    <div class="logo">
+      <div class="logo-mark">N</div>
+      <div>
+        <div class="logo-text">NEX<span>US</span></div>
+        <div class="logo-sub">Command Center</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div id="live-clock">
+        <div class="time" id="clock-time">00:00:00</div>
+        <div class="date" id="clock-date">Monday, Jan 01</div>
+      </div>
+      <div class="streak-badge">
+        <span class="fire">🔥</span>
+        <span id="streak-count">0</span>&nbsp;DAY STREAK
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== DASHBOARD GRID ===== -->
+  <div class="dashboard-grid">
+
+    <!-- ===== FOCUS TIMER ===== -->
+    <div class="card timer-card">
+      <div class="card-header">
+        <span class="card-title">⏱ Focus Timer</span>
+        <span style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace" id="session-mode-label">POMODORO</span>
+      </div>
+      <div class="card-body">
+        <div class="timer-modes">
+          <button class="mode-btn active" data-mode="pomodoro" data-time="1500">Pomodoro</button>
+          <button class="mode-btn" data-mode="short" data-time="300">Short</button>
+          <button class="mode-btn" data-mode="long" data-time="900">Long</button>
+          <button class="mode-btn" data-mode="custom" data-time="0">Custom</button>
+        </div>
+
+        <div class="timer-ring-wrap">
+          <svg class="timer-ring-svg" viewBox="0 0 200 200">
+            <circle class="ring-bg" cx="100" cy="100" r="90"/>
+            <circle class="ring-progress" id="ring" cx="100" cy="100" r="90"/>
+          </svg>
+          <div class="timer-center">
+            <div class="timer-display" id="timer-display">25:00</div>
+            <div class="timer-label" id="timer-state-label">READY</div>
+          </div>
+        </div>
+
+        <div class="timer-session">Session <span id="session-num">1</span> of <span id="session-total">4</span></div>
+
+        <div class="timer-controls">
+          <button class="btn-primary" id="timer-btn">▶ START</button>
+          <button class="btn-secondary" id="timer-reset" title="Reset">↺</button>
+        </div>
+
+        <div class="ambient-section">
+          <div class="ambient-title">🎵 Ambient Sounds</div>
+          <div class="ambient-grid">
+            <button class="ambient-btn" data-sound="rain" title="Rain">🌧️<span>RAIN</span></button>
+            <button class="ambient-btn" data-sound="forest" title="Forest">🌲<span>FOREST</span></button>
+            <button class="ambient-btn" data-sound="cafe" title="Café">☕<span>CAFÉ</span></button>
+            <button class="ambient-btn" data-sound="waves" title="Ocean">🌊<span>OCEAN</span></button>
+          </div>
+        </div>
+
+        <div class="today-stats">
+          <div class="stat-item">
+            <div class="stat-value" id="stat-focus" style="color:var(--accent)">0</div>
+            <div class="stat-label">Sessions</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="stat-time" style="color:var(--accent2)">0h</div>
+            <div class="stat-label">Focus Time</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="stat-tasks" style="color:var(--accent3)">0</div>
+            <div class="stat-label">Done</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TASK MANAGER ===== -->
+    <div class="card tasks-card">
+      <div class="card-header">
+        <span class="card-title">✅ Tasks</span>
+        <div class="tag-filter">
+          <span class="tag all active" data-filter="all">All</span>
+          <span class="tag work p-work" data-filter="work">Work</span>
+          <span class="tag personal p-personal" data-filter="personal">Personal</span>
+          <span class="tag urgent p-urgent" data-filter="urgent">Urgent</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="task-input-row">
+          <input class="task-input" id="task-input" type="text" placeholder="Add a new task..." maxlength="120"/>
+          <select class="task-priority-sel" id="task-priority">
+            <option value="general">📎 General</option>
+            <option value="work">💼 Work</option>
+            <option value="personal">🧘 Personal</option>
+            <option value="urgent">🔴 Urgent</option>
+          </select>
+          <button class="btn-add" id="add-task-btn" title="Add task">+</button>
+        </div>
+
+        <div class="tasks-list" id="tasks-list">
+          <div class="empty-tasks" id="empty-state">
+            <span class="big">🎯</span>
+            Add your first task above!
+          </div>
+        </div>
+
+        <div class="progress-wrap" id="progress-wrap" style="display:none">
+          <div class="progress-label">
+            <span>Progress</span>
+            <span id="progress-pct">0%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="tasks-footer">
+          <div class="tasks-count"><span id="done-count">0</span> done · <span id="left-count">0</span> left</div>
+          <button class="btn-clear" id="clear-done">Clear done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== WEEKLY STATS ===== -->
+    <div class="card stats-card">
+      <div class="card-header">
+        <span class="card-title">📊 Weekly Overview</span>
+        <span style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace">LAST 7 DAYS</span>
+      </div>
+      <div class="card-body">
+        <div class="stats-grid">
+          <div class="mini-stat"><div class="mini-stat-val c1" id="ms-sessions">0</div><div class="mini-stat-lbl">Sessions</div></div>
+          <div class="mini-stat"><div class="mini-stat-val c2" id="ms-focushrs">0h</div><div class="mini-stat-lbl">Focus</div></div>
+          <div class="mini-stat"><div class="mini-stat-val c3" id="ms-tasks">0</div><div class="mini-stat-lbl">Completed</div></div>
+          <div class="mini-stat"><div class="mini-stat-val c4" id="ms-streak">0</div><div class="mini-stat-lbl">Streak</div></div>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">Focus sessions per day</div>
+          <div class="bar-chart" id="bar-chart"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== RIGHT SIDEBAR ===== -->
+    <div class="sidebar">
+
+      <!-- Quick Launch -->
+      <div class="card launcher-card">
+        <div class="card-header"><span class="card-title">🚀 Quick Launch</span></div>
+        <div class="card-body">
+          <div class="launcher-grid">
+            <a class="launcher-item" href="https://mail.google.com" target="_blank"><span class="icon">📧</span><span class="lbl">GMAIL</span></a>
+            <a class="launcher-item" href="https://calendar.google.com" target="_blank"><span class="icon">📅</span><span class="lbl">CALENDAR</span></a>
+            <a class="launcher-item" href="https://drive.google.com" target="_blank"><span class="icon">🗂️</span><span class="lbl">DRIVE</span></a>
+            <a class="launcher-item" href="https://notion.so" target="_blank"><span class="icon">📝</span><span class="lbl">NOTION</span></a>
+            <a class="launcher-item" href="https://github.com" target="_blank"><span class="icon">🐙</span><span class="lbl">GITHUB</span></a>
+            <a class="launcher-item" href="https://figma.com" target="_blank"><span class="icon">🎨</span><span class="lbl">FIGMA</span></a>
+            <a class="launcher-item" href="https://slack.com" target="_blank"><span class="icon">💬</span><span class="lbl">SLACK</span></a>
+            <a class="launcher-item" href="https://trello.com" target="_blank"><span class="icon">📋</span><span class="lbl">TRELLO</span></a>
+            <a class="launcher-item" href="https://meet.google.com" target="_blank"><span class="icon">📹</span><span class="lbl">MEET</span></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Notes -->
+      <div class="card notes-card">
+        <div class="card-header"><span class="card-title">🗒 Quick Notes</span></div>
+        <div class="card-body">
+          <textarea class="notes-ta" id="notes-ta" placeholder="Capture your thoughts, ideas, meeting notes..."></textarea>
+          <div class="notes-footer">
+            <span class="notes-chars"><span id="char-count">0</span> chars</span>
+            <button class="btn-save-note" id="save-note">✓ Saved</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Habit Tracker -->
+      <div class="card habits-card">
+        <div class="card-header"><span class="card-title">🎯 Habit Tracker</span></div>
+        <div class="card-body" id="habits-body">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+    </div><!-- /sidebar -->
+  </div><!-- /grid -->
+</div><!-- /app -->
+
+<!-- Toast Notification -->
+<div id="toast">
+  <span class="toast-icon" id="toast-icon">✅</span>
+  <span id="toast-msg">Done!</span>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
